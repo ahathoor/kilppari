@@ -12,15 +12,32 @@ and open the template in the editor.
         <link rel="stylesheet" href="style.css">
 
     </head>
-    <body onload="TURTLE.initialize('code')">
+    <body onload="TURTLE.initialize('code','canvas')">
         <script src="js/libs/jquery/jquery.js"></script>
         <script src="js/libs/jqueryui/jquery-ui.js"></script>
+        <script src="js/libs/underscore.js/underscore.js"></script>
         <script src="code.js"></script>
         <div id="draggable">
             <h3>Turtle Code</h3>
-            <textarea id="code">
+            <textarea id="code" onload="$(this).val(localStorage.getItem('code'))">
+var petal = function(size) {
+    l(10);
+    f(size/2);
+    r(20);
+    f(size/2);
+    r(180-20);
+    f(size/2);
+    r(20);
+    f(size/2);
+    r(180-10);
+}
+for (i in _.range(30)) {
+    petal(i*10);
+    r(10);
+}
             </textarea>
         <input type="button" onclick="TURTLE.run()" value="RUN">
         </div>
+        <canvas id="canvas"></canvas>
     </body>
 </html>
