@@ -20,8 +20,9 @@ and open the template in the editor.
 }
 #code {
     display:block;
-    height: 300px;
-    color:white;
+    height: 350px;
+    width: 200px;
+    color: yellowgreen;
     background-color: black;
     font-size: 10pt;
 }

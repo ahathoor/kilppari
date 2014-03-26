@@ -6,13 +6,13 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>JS Turtle Graphics</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="style.css">
 
     </head>
-    <body onload="TURTLE.initialize('code','canvas')">
+    <body>
         <script src="js/libs/jquery/jquery.js"></script>
         <script src="js/libs/jqueryui/jquery-ui.js"></script>
         <script src="js/libs/underscore.js/underscore.js"></script>
@@ -20,21 +20,17 @@ and open the template in the editor.
         <div id="draggable">
             <h3>Turtle Code</h3>
             <textarea id="code" onload="$(this).val(localStorage.getItem('code'))">
-var petal = function(size) {
-    l(10);
-    f(size/2);
-    r(20);
-    f(size/2);
-    r(180-20);
-    f(size/2);
-    r(20);
-    f(size/2);
-    r(180-10);
+clear()
+function square(size) {
+	if(size < 10)
+		return;
+	for (i in _.range(4)) {
+		f(size)
+		square(size/2)
+		r(90)
+	}
 }
-for (i in _.range(30)) {
-    petal(i*10);
-    r(10);
-}
+square(150)
             </textarea>
         <input type="button" onclick="TURTLE.run()" value="RUN">
         </div>
