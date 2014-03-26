@@ -21,25 +21,30 @@ and open the template in the editor.
             <h3>Turtle Code</h3>
             <textarea id="code" onload="$(this).val(localStorage.getItem('code'))">
 clear()
-c()
-function square(size) {
-	for (i in _.range(4)) {
-		f(size)
-		r(90)
+c('rgba(255,0,0,0.5)')
+function ngon(sides,size) {
+	for (i in _.range(sides)) {
+		f(size/sides)
+		r(360/sides)
 	}
 }
-X = 0;
-function loop() {
-  X+=0.05;
-  size = 200;
-  fade(0.02)
-  square(Math.cos(X) * size)
-  r(1)
+speed(0)
+function blossom(size) {
+  for (i in range(720)) {
+    var s = Math.abs(Math.sin(i/180*PI)*size)
+    ngon(5,s)
+    r(1.5)
+  } 
 }
-if (typeof LOOP != "undefined")
+loop = function() {
+   fade(0.8)
+   blossom(1000)
+   r(2)
+}
+
+if (typeof LOOP !== "undefined")
   clearInterval(LOOP)
 LOOP = setInterval(loop,20)
-            
             </textarea>
         <input type="button" onclick="TURTLE.run()" value="RUN">
         </div>

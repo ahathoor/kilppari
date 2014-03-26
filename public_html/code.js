@@ -4,32 +4,32 @@
  * and open the template in the editor.
  */
 var enhanceTextArea = function() {
-        $("textarea").keydown(function(e) {
-            localStorage.setItem("code",$(this).val());
-            if (e.keyCode === 9) { // tab was pressed
-                // get caret position/selection
-                var start = this.selectionStart;
-                var end = this.selectionEnd;
+    $("textarea").keydown(function(e) {
+        localStorage.setItem("code", $(this).val());
+        if (e.keyCode === 9) { // tab was pressed
+            // get caret position/selection
+            var start = this.selectionStart;
+            var end = this.selectionEnd;
 
-                var $this = $(this);
-                var value = $this.val();
+            var $this = $(this);
+            var value = $this.val();
 
-                // set textarea value to: text before caret + tab + text after caret
-                $this.val(value.substring(0, start)
-                        + "  "
-                        + value.substring(end));
+            // set textarea value to: text before caret + tab + text after caret
+            $this.val(value.substring(0, start)
+                    + "  "
+                    + value.substring(end));
 
-                // put caret at right position again (add one for the tab)
-                this.selectionStart = this.selectionEnd = start + 1;
+            // put caret at right position again (add one for the tab)
+            this.selectionStart = this.selectionEnd = start + 1;
 
-                // prevent the focus lose
-                e.preventDefault();
-            }
-        });
-    };
+            // prevent the focus lose
+            e.preventDefault();
+        }
+    });
+};
 
 var TURTLE = (function() {
-    
+
     var my = {};
     var codebox = undefined;
     var ctx = undefined;
@@ -38,7 +38,7 @@ var TURTLE = (function() {
     var penDown = true;
     var color = "rgb(255,255,0)";
 
-    my.initialize = function(codebox_id,canvas_id) {
+    my.initialize = function(codebox_id, canvas_id) {
         $("#draggable").draggable();
         codebox = '#' + codebox_id;
         var canvas = document.getElementById(canvas_id);
@@ -55,16 +55,16 @@ var TURTLE = (function() {
         rescale();
         return my;
     };
-    
+
     my.run = function() {
         eval($(codebox).val());
     };
     my.color = function(new_color, x) {
         if (new_color === "random" || !new_color) {
-            new_color = "rgb(" + 
-                    Math.floor(255*Math.random()) + "," +
-                    Math.floor(255*Math.random()) + "," +
-                    Math.floor(255*Math.random()) +
+            new_color = "rgb(" +
+                    Math.floor(255 * Math.random()) + "," +
+                    Math.floor(255 * Math.random()) + "," +
+                    Math.floor(255 * Math.random()) +
                     ")";
         }
         color = new_color;
@@ -73,19 +73,19 @@ var TURTLE = (function() {
     my.clear = function() {
         my.fade(1);
     };
-    my.fade = function(amount) {  
+    my.fade = function(amount) {
         ctx.fillStyle = 'rgba(0,0,0,' + amount + ')';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.strokeStyle = color;
     };
     my.forward = function(amount) {
-        if(penDown) {
+        if (penDown) {
             ctx.beginPath();
             ctx.moveTo(pos[0] + 0, pos[1] + 0);
         }
         pos[0] += Math.sin(angle) * amount;
         pos[1] += Math.cos(angle) * amount;
-        if(penDown) {
+        if (penDown) {
             ctx.lineTo(pos[0], pos[1]);
             ctx.stroke();
             ctx.closePath();
@@ -107,40 +107,170 @@ var TURTLE = (function() {
 })();
 
 var STEPPINGTURTLE = function() {
-   var queue = new Array();
-   var speed = 0.5;
-   var my = {};
-   
-};
+    var queue = new Array();
+    var speed = 1000;
+    var my = {};
+    var turtle = undefined;
+    var command = undefined;
+    var interval;
+
+    my.start = function() {
+        setInterval(step, 5);
+    };
+    my.stop = function() {
+        clearInterval(interval);
+        forwardRunner.stop();
+        command = undefined;
+    };
+    my.setTurtle = function(t) {
+        turtle = t;
+    };
+    var step = function() {
+        if (forwardRunner.working()) {
+            forwardRunner.tick(); // pass the tick to the forward runner if
+            return;              //  active
+        }
+        if (queue.length === 0)
+            return;
+        if (!command)
+            command = queue.shift();
+        switch (command.command) {
+            case "forward":
+                forwardRunner.giveWork(command.amount);
+                break;
+            case "left":
+                turtle.left(command.amount);
+                break;
+            case "right":
+                turtle.right(command.amount);
+                break;
+            case "up":
+                turtle.up();
+                break;
+            case "down":
+                turtle.down();
+                break;
+            case "clear":
+                turtle.clear();
+                break;
+            case "fade":
+                turtle.fade(command.amount);
+                break;
+            case "color":
+                turtle.color(command.color);
+                break;
+        }
+        command = undefined;
+
+    };
+    var forwardRunner = (function() {
+        var my = {};
+        var toGo = 0;
+        var went = 0;
+        var lastTick;
+        my.tick = function() {
+            var deltaT = Date.now() - lastTick;
+            lastTick = Date.now();
+            var go = (speed * deltaT) / 1000;
+
+            if (go + went > toGo) {
+                turtle.forward(toGo);
+                my.stop();
+            } else {
+                turtle.forward(go);
+                toGo -= go;
+            }
+        };
+        my.working = function() {
+            return (toGo > 0);
+        };
+        my.stop = function() {
+            toGo = 0;
+            lastTick = undefined;
+        };
+        my.giveWork = function(amount) {
+            toGo = amount;
+            lastTick = Date.now();
+        };
+        return my;
+    })();
+    my.setSpeed = function(s) {
+        speed = s;
+    };
+    my.up = function() {
+        queue.push({command: "up"});
+    };
+    my.down = function() {
+        queue.push({command: "down"});
+    };
+    my.forward = function(amount) {
+        queue.push({command: "forward", amount: amount});
+    };
+    my.right = function(amount) {
+        queue.push({command: "right", amount: amount});
+    };
+    my.left = function(amount) {
+        queue.push({command: "left", amount: amount});
+    };
+    my.clear = function() {
+        queue.push({command: "clear"});
+    };
+    my.fade = function(amount) {
+        queue.push({command: "fade", amount: amount});
+    };
+    my.color = function(color) {
+        queue.push({command: "color", color: color});
+    };
+    return my;
+}();
 
 $("body").ready(function() {
     enhanceTextArea();
-    TURTLE.initialize("code","canvas");
+    TURTLE.initialize("code", "canvas");
+    STEPPINGTURTLE.setTurtle(TURTLE);
+    turtle = TURTLE;
+
 });
 
+var speed = function(speed) {
+    if (!speed) {
+        turtle = TURTLE;
+        STEPPINGTURTLE.stop();
+    }
+    else {
+        STEPPINGTURTLE.setSpeed(speed);
+        if (turtle !== STEPPINGTURTLE) {
+            turtle = STEPPINGTURTLE;
+            STEPPINGTURTLE.start();
+        }
+    }
+};
+
 var f = function(x) {
-    TURTLE.forward(x);
+    turtle.forward(x);
 };
 var r = function(x) {
-    TURTLE.right(x);
+    turtle.right(x);
 };
 var l = function(x) {
-    TURTLE.left(x);
+    turtle.left(x);
 };
 var c = function(x) {
-    TURTLE.color(x);
+    turtle.color(x);
 };
 var d = function() {
-    TURTLE.down();
+    turtle.down();
 };
 var u = function() {
-    TURTLE.up();  
+    turtle.up();
 };
 var clear = function() {
-    TURTLE.clear();
+    turtle.clear();
 };
 var fade = function(x) {
-    TURTLE.fade(x);
+    turtle.fade(x);
 };
+range = _.range;
+var PI = Math.PI;
 
 
