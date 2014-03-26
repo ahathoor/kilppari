@@ -36,7 +36,7 @@ var TURTLE = (function() {
     var pos = undefined;
     var angle = 0.0;
     var penDown = true;
-    var color = "#FFFFFF";
+    var color = "rgb(255,255,0)";
 
     my.initialize = function(codebox_id,canvas_id) {
         $("#draggable").draggable();
@@ -59,14 +59,14 @@ var TURTLE = (function() {
     my.run = function() {
         eval($(codebox).val());
     };
-    my.color = function(new_color) {
-        if (new_color === "random") {
+    my.color = function(new_color, x) {
+        if (new_color === "random" || !new_color) {
             new_color = "rgb(" + 
                     Math.floor(255*Math.random()) + "," +
                     Math.floor(255*Math.random()) + "," +
                     Math.floor(255*Math.random()) +
                     ")";
-        };
+        }
         color = new_color;
         ctx.strokeStyle = color;
     };
