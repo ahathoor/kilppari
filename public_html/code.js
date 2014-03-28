@@ -5,7 +5,6 @@
  */
 var enhanceTextArea = function() {
     $("textarea").keydown(function(e) {
-        localStorage.setItem("code", $(this).val());
         if (e.keyCode === 9) { // tab was pressed
             // get caret position/selection
             var start = this.selectionStart;
@@ -229,7 +228,11 @@ $("body").ready(function() {
     TURTLE.initialize("code", "canvas");
     STEPPINGTURTLE.setTurtle(TURTLE);
     turtle = TURTLE;
-
+    if (document.location.pathname !== "/") {
+        $.get('/retrieve' + document.location.pathname, function(data) {
+            $("#code").val(data);
+        });
+    }
 });
 
 var speed = function(speed) {

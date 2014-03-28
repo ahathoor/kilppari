@@ -19,7 +19,8 @@ and open the template in the editor.
         <script src="code.js"></script>
         <div id="draggable">
             <h3>Turtle Code</h3>
-            <textarea id="code" onload="$(this).val(localStorage.getItem('code'))">
+            <form action="save" method="post">
+            <textarea name=code id="code">
 clear()
 c('rgba(255,0,0,0.5)')
 function ngon(sides,size) {
@@ -47,6 +48,8 @@ if (typeof LOOP !== "undefined")
 LOOP = setInterval(loop,20)
             </textarea>
         <input type="button" onclick="TURTLE.run()" value="RUN">
+        <input type="submit" value="Save">
+        </form>
         </div>
         <canvas id="canvas"></canvas>
     </body>

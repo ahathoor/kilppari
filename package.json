@@ -1,0 +1,29 @@
+{
+  "name": "CanvasTurtle",
+  "version": "0.0.0",
+  "description": "Turtle graphics fiddle",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ahathoor/kilppari.git"
+  },
+  "keywords": [
+    "turtle"
+  ],
+  "author": "Mikko Tamminen",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/ahathoor/kilppari/issues"
+  },
+  "dependencies": {
+    "express": "~3.5.1",
+    "logfmt": "~1.1.2"
+  }
+}
