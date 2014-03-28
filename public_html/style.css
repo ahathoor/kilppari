@@ -21,7 +21,7 @@ and open the template in the editor.
 #code {
     display:block;
     height: 350px;
-    width: 200px;
+    width: 400px;
     color: yellowgreen;
     background-color: black;
     font-size: 10pt;
@@ -31,4 +31,7 @@ and open the template in the editor.
     left: 0px;
     top: 0px;
     z-index: -1;
+}
+#hidecode {
+    float: left;
 }

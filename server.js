@@ -36,22 +36,15 @@ app.get('/retrieve/:index', function(req, res) {
 });
 
 app.post('/save', function(req, res) {
-    console.log("SAVING::::");
     codes[nextIndex] = req.body.code;
     nextIndex += 1;
-    save();
+    save(nextIndex - 1);
     res.redirect('/' + (nextIndex - 1));
 });
 
-var save = function() {
-    for (var i = 0; i < nextIndex; i++) {
-        var path = 'server_save/' + i;
-        fs.exists(path, function(exists) {
-            if (!exists) {
-                fs.writeFile(path, codes[i]);
-            }
-        });
-    }
+var save = function(i) {
+    var path = 'server_save/' + i;
+    fs.writeFile(path, codes[i]);
 };
 
 var port = Number(process.env.PORT || 5000);
@@ -62,9 +55,9 @@ var startListening = function() {
 };
 
 var loadFile = function(i) {
-    fs.readFile('server_save/' + i, function(err, data) {
+    fs.readFile('server_save/' + i, 'utf-8', function(err, data) {
         if (err) {
-            console.log("Loaded " + (i-1) + " saved elements");
+            console.log("Loaded " + (i) + " saved elements");
             nextIndex = i;
             startListening();
         }

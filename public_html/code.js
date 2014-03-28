@@ -102,6 +102,14 @@ var TURTLE = (function() {
     my.right = function(degrees) {
         my.left(-degrees);
     };
+    my.center = function() {
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+        canvas.width = w;
+        canvas.height = h;
+        my.clear();
+        pos = [w / 2, h / 2];
+    };
     return my;
 })();
 
@@ -157,6 +165,9 @@ var STEPPINGTURTLE = function() {
                 break;
             case "color":
                 turtle.color(command.color);
+                break;
+            case "center":
+                turtle.center();
                 break;
         }
         command = undefined;
@@ -220,6 +231,9 @@ var STEPPINGTURTLE = function() {
     my.color = function(color) {
         queue.push({command: "color", color: color});
     };
+    my.center = function() {
+        queue.push({command: "center"});
+    };
     return my;
 }();
 
@@ -233,6 +247,11 @@ $("body").ready(function() {
             $("#code").val(data);
         });
     }
+    $("#hidecode").click(function() {
+        $("#code").toggle();
+        $("#codetitle").toggle();
+        $("input").toggle();
+    });
 });
 
 var speed = function(speed) {
@@ -272,6 +291,9 @@ var clear = function() {
 };
 var fade = function(x) {
     turtle.fade(x);
+};
+var center = function() {
+    turtle.center();
 };
 range = _.range;
 var PI = Math.PI;
