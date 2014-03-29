@@ -251,6 +251,7 @@ $("body").ready(function() {
         $("#code").toggle();
         $("#codetitle").toggle();
         $("input").toggle();
+        $("#ghlink").toggle();
     });
 });
 
