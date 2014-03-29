@@ -118,7 +118,6 @@ var STEPPINGTURTLE = function() {
     var speed = 1000;
     var my = {};
     var turtle = undefined;
-    var command = undefined;
     var interval;
 
     my.start = function() {
@@ -126,81 +125,88 @@ var STEPPINGTURTLE = function() {
     };
     my.stop = function() {
         clearInterval(interval);
-        forwardRunner.stop();
-        command = undefined;
+        forwardRunner.reset();
     };
     my.setTurtle = function(t) {
         turtle = t;
     };
     var step = function() {
+        forwardRunner.charge();
         if (forwardRunner.working()) {
-            forwardRunner.tick(); // pass the tick to the forward runner if
-            return;              //  active
+            forwardRunner.work(); // Unfinished business
         }
-        if (queue.length === 0)
-            return;
-        if (!command)
-            command = queue.shift();
-        switch (command.command) {
-            case "forward":
-                forwardRunner.giveWork(command.amount);
-                break;
-            case "left":
-                turtle.left(command.amount);
-                break;
-            case "right":
-                turtle.right(command.amount);
-                break;
-            case "up":
-                turtle.up();
-                break;
-            case "down":
-                turtle.down();
-                break;
-            case "clear":
-                turtle.clear();
-                break;
-            case "fade":
-                turtle.fade(command.amount);
-                break;
-            case "color":
-                turtle.color(command.color);
-                break;
-            case "center":
-                turtle.center();
-                break;
+        if(queue.length === 0) {
+            forwardRunner.reset();
         }
-        command = undefined;
-
+        while (queue.length !== 0 && forwardRunner.hasCharge()) {
+            var command = queue.shift();
+            switch (command.command) {
+                case "forward":
+                    forwardRunner.giveWork(command.amount);
+                    forwardRunner.work();
+                    break;
+                case "left":
+                    turtle.left(command.amount);
+                    break;
+                case "right":
+                    turtle.right(command.amount);
+                    break;
+                case "up":
+                    turtle.up();
+                    break;
+                case "down":
+                    turtle.down();
+                    break;
+                case "clear":
+                    turtle.clear();
+                    break;
+                case "fade":
+                    turtle.fade(command.amount);
+                    break;
+                case "color":
+                    turtle.color(command.color);
+                    break;
+                case "center":
+                    turtle.center();
+                    break;
+            }
+        }
     };
     var forwardRunner = (function() {
         var my = {};
         var toGo = 0;
         var went = 0;
         var lastTick;
-        my.tick = function() {
+        var charge = 0;
+        my.charge = function() {
             var deltaT = Date.now() - lastTick;
             lastTick = Date.now();
-            var go = (speed * deltaT) / 1000;
-
-            if (go + went > toGo) {
+            charge = (speed * deltaT) / 1000;
+        };
+        my.work = function() {
+            if (charge + went > toGo) {
                 turtle.forward(toGo);
-                my.stop();
+                charge -= toGo;
+                toGo = 0;
             } else {
-                turtle.forward(go);
-                toGo -= go;
+                turtle.forward(charge);
+                toGo -= charge;
+                charge = 0;
             }
         };
         my.working = function() {
             return (toGo > 0);
         };
-        my.stop = function() {
-            toGo = 0;
-            lastTick = undefined;
+        my.hasCharge = function() {
+            return (charge > 0);
         };
         my.giveWork = function(amount) {
             toGo = amount;
-            lastTick = Date.now();
+        };
+        my.reset = function() {
+            charge = 0;
+            toGo = 0;
+            lastTick = undefined;
         };
         return my;
     })();
