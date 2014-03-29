@@ -22,8 +22,7 @@ The turtle code is just JavaScript code that is evaluated when the user presses 
      fade(x)      fades the screen by x*100 percent
      center()     centers the turtle
      speed(0)     instantaneous drawning. 
-     speed(x>0)   The drawing speed is se to x pixels per second. 
-                  The commands that the turtle gets are executed at 10ms intervals.
+     speed(x>0)   The drawing speed is set to x pixels per second.
                   
 
 ### Server
