@@ -44,13 +44,13 @@ speed(0)    //speed(0) means instant drawing
 x = 0
 loop = function() {
   for(i in range(3)) {
-    triangle(50 + Math.cos(x/30)*100)
+    triangle(50 + Math.sin(x/30)*100)
     r(60)
   }
-  r(2*Math.cos(x/100))
+  r(2*Math.sin(x/100))
   x += 1
   u() //lifts the pen
-  f(500*Math.cos(x/100))
+  f(500*Math.sin(x/100))
   d() //lowers the pen
   if(x % 250 === 0) {
     fade(0.9)
