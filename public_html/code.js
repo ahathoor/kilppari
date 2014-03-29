@@ -125,6 +125,7 @@ var STEPPINGTURTLE = function() {
     };
     my.stop = function() {
         clearInterval(interval);
+        queue = new Array();
         forwardRunner.reset();
     };
     my.setTurtle = function(t) {
@@ -262,7 +263,7 @@ $("body").ready(function() {
 });
 
 var speed = function(speed) {
-    if (!speed) {
+    if (!speed || speed === 0) {
         turtle = TURTLE;
         STEPPINGTURTLE.stop();
     }
