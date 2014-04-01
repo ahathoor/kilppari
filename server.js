@@ -1,6 +1,16 @@
 var express = require("express");
 var logfmt = require("logfmt");
 var fs = require('fs');
+
+var mongoUri = process.env.MONGOLAB_URI ||
+        process.env.MONGOHQ_URL ||
+        'mongodb://localhost/mydb';
+var mongoose = require('mongoose');
+mongoose.connect(mongoUri);
+var ObjectID = require('mongodb').ObjectID;
+var Code = mongoose.model('Code', {code: String});
+ObjectId = mongoose.Types.ObjectId;
+
 var codes = {};
 var nextIndex = 0;
 var app = express();
@@ -9,9 +19,6 @@ app.use(logfmt.requestLogger());
 app.use(express.urlencoded());
 app.use("/js", express.static(__dirname + "/public_html/js"));
 
-//app.get('/js/:path', function(req,res) {
-//   res.sendFile('public_html/' + req.query.path); 
-//});
 app.get('/', function(req, res) {
     res.sendfile('public_html/index.html');
 });
@@ -24,28 +31,27 @@ app.get('/style.css', function(req, res) {
     res.sendfile('public_html/style.css');
 });
 
-app.get('/:index', function(req, res) {
+app.get('/:id', function(req, res) {
     res.sendfile('public_html/index.html');
 });
 
-app.get('/retrieve/:index', function(req, res) {
-    if (codes[req.params.index])
-        res.json(codes[req.params.index]);
-    else
-        res.json("NOT FOUND");
+app.get('/retrieve/:id', function(req, res) {
+    var id = ObjectId(req.params.id);
+    Code.find({"_id": id}, function(err, rs) {
+        if (!rs)
+            res.json("Not found");
+        else
+            res.json(rs[0].code);
+    });
 });
 
 app.post('/save', function(req, res) {
-    codes[nextIndex] = req.body.code;
-    nextIndex += 1;
-    save(nextIndex - 1);
-    res.redirect('/' + (nextIndex - 1));
+    var code = new Code({code: req.body.code});
+    code.save(function(err) {
+        if (!err)
+            res.redirect("/" + code._id);
+    })
 });
-
-var save = function(i) {
-    var path = 'server_save/' + i;
-    fs.writeFile(path, codes[i]);
-};
 
 var port = Number(process.env.PORT || 5000);
 var startListening = function() {
@@ -54,17 +60,4 @@ var startListening = function() {
     });
 };
 
-var loadFile = function(i) {
-    fs.readFile('server_save/' + i, 'utf-8', function(err, data) {
-        if (err) {
-            console.log("Loaded " + (i) + " saved elements");
-            nextIndex = i;
-            startListening();
-        }
-        else {
-            codes[i] = data;
-            loadFile(i + 1);
-        }
-    });
-};
-loadFile(0);
+startListening();
