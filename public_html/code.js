@@ -105,9 +105,6 @@ var TURTLE = (function() {
     my.center = function() {
         var w = window.innerWidth;
         var h = window.innerHeight;
-        canvas.width = w;
-        canvas.height = h;
-        my.clear();
         pos = [w / 2, h / 2];
     };
     return my;
