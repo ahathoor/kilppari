@@ -23,6 +23,10 @@ app.get('/', function(req, res) {
     res.sendfile('public_html/index.html');
 });
 
+app.get('/browse', function(req, res) {
+    res.sendfile('public_html/browse.html');
+});
+
 app.get('/code.js', function(req, res) {
     res.sendfile('public_html/code.js');
 });
@@ -35,7 +39,7 @@ app.get('/:id', function(req, res) {
     res.sendfile('public_html/index.html');
 });
 
-app.get('/retrieve/:id', function(req, res) {
+app.get('/api/retrieve/:id', function(req, res) {
     var id = ObjectId(req.params.id);
     Code.find({"_id": id}, function(err, rs) {
         if (!rs)
@@ -44,6 +48,17 @@ app.get('/retrieve/:id', function(req, res) {
             res.json(rs[0].code);
     });
 });
+
+app.get('/api/browse', function(req, res) {
+    Code.find({}, function(err, rs) {
+        var ids = [];
+        rs.forEach(function(e) {
+            ids.push(e._id);
+        });
+        res.json(ids);
+    });
+});
+
 
 app.post('/save', function(req, res) {
     var code = new Code({code: req.body.code});

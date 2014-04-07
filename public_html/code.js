@@ -250,7 +250,7 @@ $("body").ready(function() {
     STEPPINGTURTLE.setTurtle(TURTLE);
     turtle = TURTLE;
     if (document.location.pathname !== "/") {
-        $.get('/retrieve' + document.location.pathname, function(data) {
+        $.get('/api/retrieve' + document.location.pathname, function(data) {
             $("#code").val(data);
         });
     }
