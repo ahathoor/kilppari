@@ -2,12 +2,13 @@ Turtle graphics in HTML5 & node
 ===
 
 ### Overview
+![Screenshot](http://i.imgur.com/ndEKLLZ.png)
 
 JS turtle fiddle draws turtle graphics using JavaScript and canvas from user supplied code.
 The project also contains a small server that can be used to save and share the code snippets.
 The project was hacked together in the course of three days.
 
-The project is deployed at http://turtlefiddle.herokuapp.com/
+I have a copy hosted at http://188.166.135.82/html/turtlefiddle/index.html
 
 ### Usage
 
